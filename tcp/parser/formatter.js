@@ -358,6 +358,27 @@ module.exports = (__data) => {
   
     return data;
   }
+  if(__case__ === "9b"){
+    const sub_tag_code = __data.slice(10,12);
+    const subTagData = infoTransHelpers.getSubTagDetails(sub_tag_code,__data.slice(12,-12));
+    const data = {
+      input:__data,
+      tag: 'Information Transmission',
+      case:'94',
+      sub_tag: subTagData.name,
+      sub_tag_case: sub_tag_code,
+      sub_tag_details: subTagData.sub_tag_data
+    };
+
+    // const fs = require('fs');
+    // fs.writeFile('./test_data.json', JSON.stringify(data),(err)=>{
+    //   if(err){
+    //     throw err;
+    //   }
+    // });
+  
+    return data;
+  }
   if(__case__ === "80"){
     const data = {
       input: __data,
