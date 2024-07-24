@@ -2,7 +2,8 @@ const api_handler = require("./api_handler.js");
 const redis = require("redis");
 const config = require('../config.json');
 const redis_client = redis.createClient({
-    url: config.REDIS_URI
+    url: config.REDIS_URI,
+    legacyMode: true
 });
 
 redis_client.on("error", (err) => {

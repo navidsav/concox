@@ -39,7 +39,7 @@ const fetch_send_ota_commands = () => {
 
 setInterval(() => {
     fetch_send_ota_commands();
-}, 60000);
+}, 6000);
 
 app.get("/inspector", (req, res) => {
     res.json(inspector.dump());

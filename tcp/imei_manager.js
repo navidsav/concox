@@ -5,6 +5,7 @@ module.exports = {
 		const prev_remote_address = Object.keys(terminals_connected).find(k => terminals_connected[k] === imei);
 		delete terminals_connected[prev_remote_address];
 		terminals_connected[client] = imei;
+		console.log(" imei :" + imei)
 		return imei;
 	},
 	get: (remote_address, remote_port) => {

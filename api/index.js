@@ -8,13 +8,7 @@ const config = require('../config');
 
 app.get('/concox/last_location/:imei', (req, res) => {
     // db.read('status', { imei: req.params.imei, gps: { $exists: true } })
-    db.read('status_v2', {
-        imei: req.params.imei
-    }, {
-        events: {
-            $slice: -1
-        }
-    })
+    db.read('status_v2',query= {"events.case":"22",imei:req.params.imei},limit=1,offset=0,projection= { "events.$": 1 },sort={"events.time": -1})
         .then((r) => {
             if(r.length && r[0].events.length) res.json(r[0].events[0]);
             else res.json(null);
@@ -92,7 +86,7 @@ app.get('/concox/invalid_data', (req, res) => {
 });
 
 app.get('/concox/devices/', (req, res, next) => {
-    db.read('devices', {}, 'all')
+    db.read('status_v2',query={},limit=1,offset=0, projection={"imei":2,"_id":0},sorting={})
         .then((r) => {
             res.json(r);
         })
@@ -151,7 +145,7 @@ mongo(config.DB_URI, config.DB_NAME)
         db = DB;
         app.listen(config.CONCOX_API_PORT, () => {
             console.log({ event: 'CONCOX_SERVER_API STARTED', PORT: config.CONCOX_API_PORT });
-            process.send('ready');
+            // process.send('ready');
         });
     })
     .catch((e) => {
@@ -169,7 +163,7 @@ process.on('SIGINT', function() {
     if (db) {
         setTimeout(() => {
             db.close();
-            setTimout(() => {
+            setTimeout(() => {
                 process.exit(0);
             }, 100);
         }, 100);
