@@ -90,6 +90,9 @@ server.on("connection", (socket) => {
     socket.setKeepAlive(true, 50000);
     let imei = null;
     socket.on("data", (data) => {
+
+        console.log("============== RAW DATA " , data)
+
         const parsed__ = parser(data);
         if (
             Array.isArray(parsed__) &&
