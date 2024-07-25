@@ -396,174 +396,192 @@ function getDYDValues(hex) {
 
 const getSubTagDetails = (sub_tag, hexData) => {
     const data = {};
-    // console.log('hex: ',hexData);
-    if (sub_tag === '00') {
-        const decimalValue = hex_to_decimal(hexData) / 100;
-        data['name'] = 'External power voltage';
-        data['sub_tag_data'] = { 'Voltage': decimalValue };
-    }
-    if (sub_tag === '01' || sub_tag === '02' || sub_tag === '03') {
-        data['name'] = 'Customized';
-    }
-    if (sub_tag === '04') {
-        const parsedData = hex_to_ascii(hexData);
-        // console.log('data', parsedData)
-        data['name'] = 'Terminal status synchronization';
-        const fields = parsedData.split(';');
-        const parsedFields = [];
-        fields.forEach((each) => {
-            // console.log(each);
-            const splitEach = each.split('=');
-            // console.log(splitEach);
-            if (splitEach[0] === 'ALM1') {
-                const res = getALM1Values(splitEach[1]);
-                res['tag'] = 'Alarm Bit 1'
-                parsedFields.push(res);
-            }
-            if (splitEach[0] === 'ALM2') {
-                const res = getALM2Values(splitEach[1]);
-                res['tag'] = 'Alarm Bit 2'
-                parsedFields.push(res);
-            }
-            if (splitEach[0] === 'ALM3') {
-                const res = getALM3Values(splitEach[1]);
-                res['tag'] = 'Alarm Bit 3'
-                parsedFields.push(res);
-            }
-            if (splitEach[0] === 'ALM4') {
-                const res = getALM4Values(splitEach[1]);
-                res['tag'] = 'Alarm Bit 4'
-                parsedFields.push(res);
-            }
-            if (splitEach[0] === 'STA1') {
-                const res = getSTA1Values(splitEach[1]);
-                res['tag'] = 'Status Bit 1'
-                parsedFields.push(res);
-            }
-            if (splitEach[0] === 'DYD') {
-                const res = getDYDValues(splitEach[1]);
-                res['tag'] = 'Fuel/Electricity Cutoff Status'
-                parsedFields.push(res);
-            }
-            if (splitEach[0] === 'SOS') {
-                const sosNumbers = splitEach[1].split(',');
-                // console.log(sosNumbers);
-                const sosList = [];
-                sosNumbers.forEach((num) => {
-                    if (num != '') {
-                        sosList.push(num);
-                    }
-                })
-                // console.log(sosList);
-                if (sosList.length !== 0) {
-                    const res = {};
-                    res['tag'] = 'SOS Number';
-                    res['SOS Numbers'] = sosList;
-                    parsedFields.push(res);
-                }
-            }
-            if (splitEach[0] === 'CENTER') {
-                //adopt ASCII to transmit
-                // console.log(splitEach[1]);
-                if (splitEach[1] !== '') {
-                    const res = {};
-                    res['tag'] = 'Centre Number';
-                    res['Centre Number'] = splitEach[1];
-                    parsedFields.push(res);
-                }
-            }
-            if (splitEach[0] === 'FENCE') {
-                //adopt ASCII to transmit
-                // console.log(splitEach[1]);
-                if (splitEach[1] !== '') {
-                    const res = {};
-                    res['tag'] = 'GeoFence';
-                    res['GeoFence'] = splitEach[1];
-                    parsedFields.push(res);
-                }
-            }
-            if (splitEach[0] === 'MODE') {
-                //adopt ASCII to transmit
-                // console.log(splitEach[1]);
-                if (splitEach[1] !== '') {
-                    const res = {};
-                    res['tag'] = 'Mode';
-                    res['Mode'] = splitEach[1].split(',');
-                    parsedFields.push(res);
-                }
-            }
-            // if(splitEach[0]==='IMSI'){
-            //     if(splitEach[1]!==''){
-            //         parsedFields['IMSI'] = splitEach[1];
-            //     }
-            // }
-            // if(splitEach[0]==='ICCID'){
-            //     if(splitEach[1]!==''){
-            //         parsedFields['ICCID'] = splitEach[1];
-            //     }
-            // }
-            // if(splitEach[0]==='STARTTIME'){
-            //     if(splitEach[1]!==''){
-            //         parsedFields['Log in successfully'] = splitEach[1];
-            //     }
-            // }
-            // if(splitEach[0]==='LOGINPACKET'){
-            //     if(splitEach[1]!==''){
-            //         parsedFields['Number of login packets'] = splitEach[1];
-            //     }
-            // }
-            // if(splitEach[0]==='RESTART'){
-            //     if(splitEach[1]!==''){
-            //         parsedFields['Reboot times'] = splitEach[1];
-            //     }
-            // }
-        })
-        data['sub_tag_data'] = parsedFields;
-    }
-    if (sub_tag === '05') {
-        const binaryForm = hex_to_binary(hexData);
-        const headings = {
-            '0': 'Door Status',
-            '1': 'Triggering Status',
-            '2': 'IO Status'
-        }
-        const parsedFields = {};
-        for (let i = 0; i < 3; i++) {
-            if(i==0){
-                parsedFields[headings[i]] = binaryForm[3 - i] == 1 ? true : false;
-            }
-            if(i==1){
-                parsedFields[headings[i]] = binaryForm[3 - i] == 1 ? 'High triggering' : 'Low triggering';
-            }
-            if(i==2){
-                parsedFields[headings[i]] = binaryForm[3 - i] == 1 ? 'High' : 'Low';
-            }
-        }
-        data['name'] = 'Door status';
-        data['sub_tag_data'] = parsedFields;
-    }
-    if (sub_tag === '08') {
-        const parsedData = hex_to_ascii(hexData);
-        data['name'] = 'Self-detection parameters';
-        data['sub_tag_data'] = parsedData;
+    const parsedData = "";
+    switch (sub_tag) {
+        case "00":
+            const decimalValue = hex_to_decimal(hexData) / 100;
+            data['name'] = 'External power voltage';
+            data['sub_tag_data'] = { 'Voltage': decimalValue };
+            break;
 
-    }
-    if (sub_tag === '0a') {
-        const parsedData = {
-            'IMEI': hexData.slice(0,9),
-            'IMSI':hexData.slice(9,17),
-            'ICCID':hexData.slice(17,27)
-        }
-        data['name'] = 'ICCID';
-        data['sub_tag_data'] = parsedData;
-    }
-    if (sub_tag === '11') {
-        const parsedData = hex_to_decimal(hexData);
-        data['name'] = 'Vibration times';
-        data['sub_tag_data'] = parsedData;
-    }
-    if (sub_tag === '22') {
-        data['name'] = 'Device status information';
+        case "01":
+            data['name'] = 'Customized';
+            break;
+
+        case "02":
+            data['name'] = 'Customized';
+            break;
+
+        case "03":
+            data['name'] = 'Customized';
+            break;
+
+        case "04":
+            parsedData = hex_to_ascii(hexData);
+            // console.log('data', parsedData)
+            data['name'] = 'Terminal status synchronization';
+            const fields = parsedData.split(';');
+            const parsedFields = [];
+            fields.forEach((each) => {
+                // console.log(each);
+                const splitEach = each.split('=');
+                // console.log(splitEach);
+                if (splitEach[0] === 'ALM1') {
+                    const res = getALM1Values(splitEach[1]);
+                    res['tag'] = 'Alarm Bit 1'
+                    parsedFields.push(res);
+                }
+                if (splitEach[0] === 'ALM2') {
+                    const res = getALM2Values(splitEach[1]);
+                    res['tag'] = 'Alarm Bit 2'
+                    parsedFields.push(res);
+                }
+                if (splitEach[0] === 'ALM3') {
+                    const res = getALM3Values(splitEach[1]);
+                    res['tag'] = 'Alarm Bit 3'
+                    parsedFields.push(res);
+                }
+                if (splitEach[0] === 'ALM4') {
+                    const res = getALM4Values(splitEach[1]);
+                    res['tag'] = 'Alarm Bit 4'
+                    parsedFields.push(res);
+                }
+                if (splitEach[0] === 'STA1') {
+                    const res = getSTA1Values(splitEach[1]);
+                    res['tag'] = 'Status Bit 1'
+                    parsedFields.push(res);
+                }
+                if (splitEach[0] === 'DYD') {
+                    const res = getDYDValues(splitEach[1]);
+                    res['tag'] = 'Fuel/Electricity Cutoff Status'
+                    parsedFields.push(res);
+                }
+                if (splitEach[0] === 'SOS') {
+                    const sosNumbers = splitEach[1].split(',');
+                    // console.log(sosNumbers);
+                    const sosList = [];
+                    sosNumbers.forEach((num) => {
+                        if (num != '') {
+                            sosList.push(num);
+                        }
+                    })
+                    // console.log(sosList);
+                    if (sosList.length !== 0) {
+                        const res = {};
+                        res['tag'] = 'SOS Number';
+                        res['SOS Numbers'] = sosList;
+                        parsedFields.push(res);
+                    }
+                }
+                if (splitEach[0] === 'CENTER') {
+                    //adopt ASCII to transmit
+                    // console.log(splitEach[1]);
+                    if (splitEach[1] !== '') {
+                        const res = {};
+                        res['tag'] = 'Centre Number';
+                        res['Centre Number'] = splitEach[1];
+                        parsedFields.push(res);
+                    }
+                }
+                if (splitEach[0] === 'FENCE') {
+                    //adopt ASCII to transmit
+                    // console.log(splitEach[1]);
+                    if (splitEach[1] !== '') {
+                        const res = {};
+                        res['tag'] = 'GeoFence';
+                        res['GeoFence'] = splitEach[1];
+                        parsedFields.push(res);
+                    }
+                }
+                if (splitEach[0] === 'MODE') {
+                    //adopt ASCII to transmit
+                    // console.log(splitEach[1]);
+                    if (splitEach[1] !== '') {
+                        const res = {};
+                        res['tag'] = 'Mode';
+                        res['Mode'] = splitEach[1].split(',');
+                        parsedFields.push(res);
+                    }
+                }
+                // if(splitEach[0]==='IMSI'){
+                //     if(splitEach[1]!==''){
+                //         parsedFields['IMSI'] = splitEach[1];
+                //     }
+                // }
+                // if(splitEach[0]==='ICCID'){
+                //     if(splitEach[1]!==''){
+                //         parsedFields['ICCID'] = splitEach[1];
+                //     }
+                // }
+                // if(splitEach[0]==='STARTTIME'){
+                //     if(splitEach[1]!==''){
+                //         parsedFields['Log in successfully'] = splitEach[1];
+                //     }
+                // }
+                // if(splitEach[0]==='LOGINPACKET'){
+                //     if(splitEach[1]!==''){
+                //         parsedFields['Number of login packets'] = splitEach[1];
+                //     }
+                // }
+                // if(splitEach[0]==='RESTART'){
+                //     if(splitEach[1]!==''){
+                //         parsedFields['Reboot times'] = splitEach[1];
+                //     }
+                // }
+            })
+            data['sub_tag_data'] = parsedFields;
+            break;
+
+        case "05":
+            const binaryForm = hex_to_binary(hexData);
+            const headings = {
+                '0': 'Door Status',
+                '1': 'Triggering Status',
+                '2': 'IO Status'
+            }
+            const parsedFieldsDic = {};
+            for (let i = 0; i < 3; i++) {
+                if (i == 0) {
+                    parsedFieldsDic[headings[i]] = binaryForm[3 - i] == 1 ? true : false;
+                }
+                if (i == 1) {
+                    parsedFieldsDic[headings[i]] = binaryForm[3 - i] == 1 ? 'High triggering' : 'Low triggering';
+                }
+                if (i == 2) {
+                    parsedFieldsDic[headings[i]] = binaryForm[3 - i] == 1 ? 'High' : 'Low';
+                }
+            }
+            data['name'] = 'Door status';
+            data['sub_tag_data'] = parsedFieldsDic;
+            break;
+
+        case "08":
+            parsedData = hex_to_ascii(hexData);
+            data['name'] = 'Self-detection parameters';
+            data['sub_tag_data'] = parsedData;
+            break;
+
+        case "0a":
+            const parsedDataDic = {
+                'IMEI': hexData.slice(0, 9),
+                'IMSI': hexData.slice(9, 17),
+                'ICCID': hexData.slice(17, 27)
+            }
+            data['name'] = 'ICCID';
+            data['sub_tag_data'] = parsedDataDic;
+            break;
+
+        case "11":
+            const parsedData = hex_to_decimal(hexData);
+            data['name'] = 'Vibration times';
+            data['sub_tag_data'] = parsedData;
+            break;
+
+        case "22":
+            data['name'] = 'Device status information';
+            break;
+
+
     }
     return data;
 }
