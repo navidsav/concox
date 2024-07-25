@@ -363,8 +363,8 @@ module.exports = (__data) => {
     const subTagData = infoTransHelpers.getSubTagDetails(sub_tag_code,__data.slice(12,-12));
     const data = {
       input:__data,
-      tag: 'Information Transmission',
-      case:'94',
+      tag: 'External device transfer protocol',
+      case:'9b',
       sub_tag: subTagData.name,
       sub_tag_case: sub_tag_code,
       sub_tag_details: subTagData.sub_tag_data
