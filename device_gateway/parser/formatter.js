@@ -358,12 +358,12 @@ module.exports = (__data) => {
   
     return data;
   }
-  if(__case__ === "9b"){
+  if(__case__ === "9b"){ // MAGICAR alarm system packets
     const sub_tag_code = __data.slice(10,12);
     const subTagData = infoTransHelpers.getSubTagDetails(sub_tag_code,__data.slice(12,-12));
     const data = {
       input:__data,
-      tag: 'External device transfer protocol',
+      tag: 'External device transfer protocol(Magicar Alarm System)',
       case:'9b',
       sub_tag: subTagData.name,
       sub_tag_case: sub_tag_code,
